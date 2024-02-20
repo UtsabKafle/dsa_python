@@ -1,41 +1,59 @@
 class Graph:
-	def __init__(self,edges):
-		self.edges = edges
-		self.graph = {}
-		for a,b in self.edges:
-			if a in self.graph:
-				self.graph[a].append(b)
-			else:
-				self.graph[a] = [b]
-		print(self.graph)
+    def __init__(self, edges):
+        """
+        Initialize the graph with edges.
+        """
+        self.edges = edges
+        self.graph = {}
+        for source, destination in self.edges:
+            if source in self.graph:
+                self.graph[source].append(destination)
+            else:
+                self.graph[source] = [destination]
 
-	def path_(self,start,end):
-			# a-c -> [b,c]
-			# a-v -> [b,d,v]
-		
-			path = []
-			for i in self.graph[start]:
-				if i == end:
-					path.append(i)
-					return path
-				else:
-					if i in self.graph:
-						for j in self.graph[i]:
-							path += self.path_(j,end)
-			return path
+    def find_path(self, start, end):
+        """
+        Find a path from start to end in the graph using depth-first search.
+        """
+        if start not in self.graph or end not in self.graph:
+            print("Start or end node not found in the graph.")
+            return []
 
+        return self._dfs(start, end, [])
+
+    def _dfs(self, current, end, visited):
+        """
+        Perform depth-first search to find a path from current node to the end node.
+        """
+        visited.append(current)
+
+        if current == end:
+            return visited
+
+        if current in self.graph:
+            for neighbor in self.graph[current]:
+                if neighbor not in visited:
+                    path = self._dfs(neighbor, end, visited.copy())
+                    if path:
+                        return path
+
+        return []
 
 
 def main():
-	routes = [
-		('a','b'),
-		('b','c'),
-		('b','d'),
-		('d','i'),
-		('d','v'),
-	]
-	graph = Graph(routes)
-	print(graph.path_(start='a',end='c'))
+    routes = [
+        ('a', 'b'),
+        ('b', 'c'),
+        ('b', 'd'),
+        ('d', 'i'),
+        ('d', 'v'),
+    ]
+    graph = Graph(routes)
+
+    start_node = 'a'
+    end_node = 'c'
+    print(f"Path from {start_node} to {end_node}: {graph.find_path(start_node, end_node)}")
+
 
 if __name__ == "__main__":
-	main()
+    main()
